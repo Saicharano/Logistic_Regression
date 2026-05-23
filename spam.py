@@ -7,20 +7,24 @@ from sklearn.metrics import confusion_matrix
 from sklearn.metrics import classification_report
 import re
 import streamlit as st
-data = pd.read_csv("emails.csv")
-df = pd.DataFrame(data)
-x = df.drop(["Prediction","Email No."],axis=1)
-y = df["Prediction"]
-features = x.columns
-vectorizer = CountVectorizer()
-# x_vectorized = vectorizer.fit_transform(x);
-x_train,x_test,y_train,y_test = train_test_split(x,y,
-                                                 test_size=0.2,
-                                                 random_state=42)
-model = LogisticRegression(max_iter=1000)
-model.fit(x_train,y_train)
-y_pred = model.predict(x_test)
-accuracy = accuracy_score(y_test,y_pred)
+@st.cache_resource
+def train_model():
+    data = pd.read_csv("emails.csv")
+    df = pd.DataFrame(data)
+    x = df.drop(["Prediction","Email No."],axis=1)
+    y = df["Prediction"]
+    features = x.columns
+    vectorizer = CountVectorizer()
+    # x_vectorized = vectorizer.fit_transform(x);
+    x_train,x_test,y_train,y_test = train_test_split(x,y,
+                                                    test_size=0.2,
+                                                    random_state=42)
+    model = LogisticRegression(max_iter=1000)
+    model.fit(x_train,y_train)
+    y_pred = model.predict(x_test)
+    accuracy = accuracy_score(y_test,y_pred)
+    return model,accuracy,features
+model,accuracy,features= train_model()
 #print(accuracy)
 st.title("Spam Email Detector")
 st.write(f"Model Accuracy: {accuracy:.2f}")
