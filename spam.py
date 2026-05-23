@@ -26,11 +26,7 @@ st.title("Spam Email Detector")
 st.write(f"Model Accuracy: {accuracy:.2f}")
 email = st.text_area("Enter Your Email: ")
 email = re.sub(r'http\S+', '', email)
-
-# Remove emojis/special symbols
 email = re.sub(r'[^\w\s.,!?@\-]', '', email)
-
-# Remove extra spaces and newlines
 email = " ".join(email.split())
 if st.button("Predict"):
     email_words = email.lower().split()
